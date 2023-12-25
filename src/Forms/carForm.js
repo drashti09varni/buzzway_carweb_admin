@@ -24,7 +24,7 @@ export default function CarForm() {
 
   const handleDelete = id => {
     try{  
-    fetch(`http://localhost:4200/api/v1/deleteTaxi/${id}`, {
+    fetch(`http://193.203.162.218:4200/api/v1/deleteTaxi/${id}`, {
       method: "DELETE" })
       .then(response => response.json())
       .then(() => 
@@ -45,7 +45,7 @@ export default function CarForm() {
     setEdit(true);
     // try {
     //   setEdit(true);
-    //   const addRecordEndpoint = `http://localhost:4200/api/v1/updateTaxi/${id}`;
+    //   const addRecordEndpoint = `http://193.203.162.218:4200/api/v1/updateTaxi/${id}`;
     //   const options = {
     //     method: 'POST',
     //     headers: {
@@ -66,7 +66,7 @@ export default function CarForm() {
  
     try {
       setEdit(true);
-      const addRecordEndpoint = `http://localhost:4200/api/v1/updateTaxi/${data._id}`;
+      const addRecordEndpoint = `http://193.203.162.218:4200/api/v1/updateTaxi/${data._id}`;
       const options = {
         method: 'POST',
         headers: {
@@ -93,7 +93,7 @@ export default function CarForm() {
     e.preventDefault();
 
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/addTaxi";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/addTaxi";
 
       const options = {
         method: 'POST',
@@ -118,7 +118,7 @@ export default function CarForm() {
   const fatch = async () => {
 
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/allTaxi";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/allTaxi";
 
       const options = {
         method: 'GET',

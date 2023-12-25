@@ -24,7 +24,7 @@ export default function CityForm() {
 
   const handleDelete = id => {
     try{  
-    fetch(`http://localhost:4200/api/v1/deleteCity/${id}`, {
+    fetch(`http://193.203.162.218:4200/api/v1/deleteCity/${id}`, {
       method: "DELETE" })
       .then(response => response.json())
       .then(() => 
@@ -52,7 +52,7 @@ export default function CityForm() {
  
     try {
       setEdit(true);
-      const addRecordEndpoint = `http://localhost:4200/api/v1/updateCity/${data._id}`;
+      const addRecordEndpoint = `http://193.203.162.218:4200/api/v1/updateCity/${data._id}`;
       const options = {
         method: 'POST',
         headers: {
@@ -77,7 +77,7 @@ export default function CityForm() {
     e.preventDefault();
 
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/addCity";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/addCity";
 
       const options = {
         method: 'POST',
@@ -102,7 +102,7 @@ export default function CityForm() {
   const fatch = async () => {
 
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/allCity";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/allCity";
 
       const options = {
         method: 'GET',

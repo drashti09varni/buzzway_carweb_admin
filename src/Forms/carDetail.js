@@ -8,14 +8,12 @@ const initialValue = {
   tollTax: "",
   stateTax: "",
   driverAllow: "",
-  amount: "",
   pessenger: "",
   bags: "",
   baseFare: "",
   carImg: [],
   car_name: "",
-  selectCity: "",
-  selectTaxi: ""
+
 
 }
 export default function CarDetailsForm() {
@@ -27,13 +25,14 @@ export default function CarDetailsForm() {
   const [selectPrint, setSelectPrint] = useState();
   const [formData, setFormData] = useState(initialValue);
   const [allDataTable, setAllDataTable] = useState([]);
-
+  const [showImg, setShowImg] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // delete products.....
   const handleDelete = id => {
     console.log(id);
     try {
-      fetch(`http://localhost:4200/api/v1/deletecardetail/${id}`, {
+      fetch(`http://193.203.162.218:4200/api/v1/deletecardetail/${id}`, {
         method: "DELETE"
       })
         .then(response => response.json())
@@ -50,51 +49,90 @@ export default function CarDetailsForm() {
   }
 
   // update get data form.....
-  const updateUser = (id) => {
-    const user = allDataTable.find((user) => user.id === id);
-    console.log(user.carImg)
+  const getUpdateData = (id) => {
+    console.log(id)
+    const user = allDataTable.find((user) => user._id === id);
+    console.log(user)
+    const imageData = user?.carImg?.map((image) => (  
+      {
+        name:image,
+      preview: `http://193.203.162.218:4200/uploads/${image}`,
+    }));
+  console.log(imageData)
+  console.log(imageData[0].preview);
     setFormData({
       ...initialValue,
       totalKm: user.totalKm,
       tollTax: user.tollTax,
       stateTax: user.stateTax,
       driverAllow: user.driverAllow,
-      amount: user.amount,
       pessenger: user.pessenger,
       bags: user.bags,
       baseFare: user.baseFare,
-      carImg:user.carImg
+      carImg: imageData[0].name,
+      id:user._id
     });
+    setShowImg(imageData[0].preview);
     setSelectCity(user.city_name);
     setSelectPrint(user.car_name);
     setEdit(true);
-  
-    
-
+    console.log(imageData[0].preview)
   };
 
-  // update data.....
-  const handleUpdate = async () => {
-    try {
-      const response = await axios.post(`http://localhost:4200/api/v1/updateTaxi/${data._id}`, data);
-      if (response.data.status === 'success') {
-        setData(response.data);
-        fatchData();
-        setEdit(false);
-        setFormData(initialValue);
-        toast.success('Update Taxi Data Successfully');
-      } else {
-        toast.error('Error updating taxi data. Please try again.');
-      }
-    } catch (err) {
-      toast.error('Please enter valid data.');
+ 
+// update data.....
+const handleUpdate = async () => {
+  console.log(formData)
+  try {
+    const formDataToSend = new FormData();
+    formDataToSend.append('city_name', selectCity);
+    formDataToSend.append('car_name', selectPrint);
+    formDataToSend.append('totalKm', formData.totalKm);
+    formDataToSend.append('tollTax', formData.tollTax);
+    formDataToSend.append('stateTax', formData.stateTax);
+    formDataToSend.append('driverAllow', formData.driverAllow);
+    formDataToSend.append('pessenger', formData.pessenger);
+    formDataToSend.append('bags', formData.bags);
+    formDataToSend.append('baseFare', formData.baseFare);
+
+    // Append existing image if no new image selected
+    if (formData.carImg.length === 0) {
+      formDataToSend.append('carImg', formData.carImg[0].name);
+    } else {
+      // Append new image if selected
+      formDataToSend.append('carImg', formData.carImg[0]);
     }
-  };
+
+    const addRecordEndpoint = `http://193.203.162.218:4200/api/v1/updatecardetail/${formData.id}`;
+    const response = await fetch(addRecordEndpoint, {
+      method: 'PATCH',
+      body: formDataToSend,
+    });
+    const jsonResponse = await response.json();
+
+    if (jsonResponse.status === 'success') {
+      setData(jsonResponse);
+      fatchData();
+      setEdit(false);
+      setFormData(initialValue);
+      toast.success('Update Taxi Data Successfully');
+      window.location.reload();
+      setFormData(initialValue);
+      setCityPrint(null);
+      setTaxiPrint(null);
+    } else {
+      toast.error('Error updating taxi data. Please try again.');
+    }
+  } catch (err) {
+   
+  }
+};
+
+
 
   // form submit.....
   let handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('city_name', selectCity);
@@ -113,7 +151,7 @@ export default function CarDetailsForm() {
         formDataToSend.append('carImg', formData.carImg[i]);
       }
 
-      const response = await axios.post(`http://localhost:4200/api/v1/addcardetails`, formDataToSend, {
+      const response = await axios.post(`http://193.203.162.218:4200/api/v1/addcardetails`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -128,7 +166,7 @@ export default function CarDetailsForm() {
         setFormData(initialValue);
         setCityPrint(null);
         setTaxiPrint(null);
-        window.reload();
+        window.location.reload();
       }
       if (response.data.status === "fail") {
         toast.error(response.data.message);
@@ -142,7 +180,7 @@ export default function CarDetailsForm() {
   // texi fect------
   const fatch = async () => {
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/allTaxi";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/allTaxi";
       const options = {
         method: 'GET',
         headers: {
@@ -156,7 +194,7 @@ export default function CarDetailsForm() {
       console.log(err)
     }
     try {
-      const api = "http://localhost:4200/api/v1/allCity";
+      const api = "http://193.203.162.218:4200/api/v1/allCity";
       const options = {
         method: 'GET',
         headers: {
@@ -176,7 +214,7 @@ export default function CarDetailsForm() {
   const fatchData = async () => {
 
     try {
-      const addRecordEndpoint = "http://localhost:4200/api/v1/getcardetail";
+      const addRecordEndpoint = "http://193.203.162.218:4200/api/v1/getcardetail";
 
       const options = {
         method: 'GET',
@@ -199,9 +237,6 @@ export default function CarDetailsForm() {
     fatchData();
   }, []);
 
-
-
-
   const onOptionChangeHandler = (event) => {
     setSelectPrint(event.target.value);
 
@@ -222,8 +257,13 @@ export default function CarDetailsForm() {
     const files = e.target.files;
     setFormData({
       ...formData,
-      carImg: files,
+      carImg: [...files], 
     });
+
+    // To display the first image preview
+    if (files.length > 0) {
+      setShowImg(URL.createObjectURL(files[0]));
+    }
   };
 
   return <>
@@ -259,15 +299,15 @@ export default function CarDetailsForm() {
 
           <div class="py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
-              type="text" placeholder="Total KM" name='totalKm' onChange={handlechange} value={formData.totalKm} />
+              type="number" placeholder="Total KM" name='totalKm' onChange={handlechange} value={formData.totalKm} />
           </div>
           <div class=" py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
-              type="text" placeholder="Base Fare" name='baseFare' onChange={handlechange} value={formData.baseFare} />
+              type="number" placeholder="Base Fare" name='baseFare' onChange={handlechange} value={formData.baseFare} />
           </div>
           <div class=" py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
-              type="text" placeholder="Toll Tax" name='tollTax' onChange={handlechange} value={formData.tollTax} />
+              type="number" placeholder="Toll Tax" name='tollTax' onChange={handlechange} value={formData.tollTax} />
           </div>
           <div class=" py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
@@ -280,24 +320,24 @@ export default function CarDetailsForm() {
 
           <div class=" py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
-              type="text" placeholder="Pessenger" name='pessenger' onChange={handlechange} value={formData.pessenger} />
+              type="number" placeholder="Pessenger" name='pessenger' onChange={handlechange} value={formData.pessenger} />
           </div>
           <div class=" py-2">
             <input class="w-full border border-gray-400 p-2 focus:outline-none rounded-md text-black"
-              type="text" placeholder="Bags" name='bags' onChange={handlechange} value={formData.bags} />
+              type="number" placeholder="Bags" name='bags' onChange={handlechange} value={formData.bags} />
           </div>
           <div class=" py-2">
-
             <input
               type="file"
-         
               name="carImg"
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none text-[#000] focus:border-blue-500"
               placeholder="Enter product image"
               onChange={handleImageChange}
               multiple
               accept="image/*"
             />
+            {/* {edit ? <img src={showImg} className='h-24 w-40'/> : ""} */}
+            {edit && <img src={showImg} alt="Preview" className='h-24 w-40'/>}
           </div>
           <div className='flex'>
             {edit ? <button type='button' className="mx-auto block bg-[#fff] text-[#188ae2] hover:bg-[#188ae2] hover:text-[#fff] 
@@ -312,7 +352,18 @@ export default function CarDetailsForm() {
           </div>
         </div>
       </form>
-
+      <div className="my-4">
+        <lable className="text-[#000]  text-black text-[20px] py-3 px-8">
+          Search : 
+        </lable>     
+        <input
+          type="text"
+          placeholder="Search by City Name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border border-gray-400 text-[#000] p-1 rounded-md"
+        />
+      </div>
       <div class="w-full h-screen ">
         <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
           <div class="flex flex-col">
@@ -369,7 +420,9 @@ export default function CarDetailsForm() {
 
                   <tbody class="bg-white text-center">
 
-                    {allDataTable?.map((item, i) => {
+                    { allDataTable.filter((item) =>
+                        item.city_name.toLowerCase().includes(searchTerm.toLowerCase())
+                      ).map((item, i) => {
                       return <>
                         <tr className='border border-grey-400'>
                           <td className='text-black border-r border-gray-400'>{i + 1}</td>
@@ -385,7 +438,7 @@ export default function CarDetailsForm() {
                           </td>
                           <td class="px-6 py-4 whitespace-no-wrap  bg-white-200  border-r border-gray-400">
                             <div class="text-sm leading-5 text-gray-900">
-                              <img src={`http://localhost:3000/uploads/${item.carImg}`} className='h-30 w-40' />
+                              <img src={`http://193.203.162.218:4200/uploads/${item.carImg}`} className='h-30 w-40' />
                             </div>
                           </td>
                           <td class="px-6 py-4 whitespace-no-wrap  bg-white-200  border-r border-gray-400">
@@ -415,7 +468,8 @@ export default function CarDetailsForm() {
                           </td>
                           <td class="px-6 py-4 whitespace-no-wrap  bg-white-200  border-r border-gray-400">
                             <div class="text-sm leading-5 text-gray-900">
-                              {Number(item.baseFare) + Number(item.tollTax)}
+                              {item.driverAllow == Number ? (Number(item.baseFare) + Number(item.tollTax) + Number(item.driverAllow))
+                               : (Number(item.baseFare) + Number(item.tollTax))}
                             </div>
                           </td>
                           <td class="px-6 py-4 whitespace-no-wrap  bg-white-200  border-r border-gray-400">
@@ -430,7 +484,7 @@ export default function CarDetailsForm() {
                           </td>
                           <td class="px-6 py-4 whitespace-no-wrap bg-white-200 text-center">
                             <div class="text-sm leading-5 text-gray-900 flex space-x-6 justify-center items-center">
-                              <RiFileEditFill size={20} fill='green' onClick={() => updateUser(item.id)} />
+                              <RiFileEditFill size={20} fill='green' onClick={() => getUpdateData(item._id)} />
 
                               <RiDeleteBin6Fill size={20} fill='red' onClick={() => handleDelete(item.id)} />
                             </div>

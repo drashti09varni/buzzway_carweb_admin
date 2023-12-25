@@ -238,6 +238,8 @@ import {FaWpforms, FaAngleDown} from 'react-icons/fa';
 import {AiFillCar} from 'react-icons/ai';
 import {HiLocationMarker} from 'react-icons/hi';
 import {MdTour} from 'react-icons/md';
+import { RiMemoriesFill } from "react-icons/ri";
+
 
 function Sidebar({openSidebarToggle, OpenSidebar}) {
   return (
@@ -281,10 +283,7 @@ function Sidebar({openSidebarToggle, OpenSidebar}) {
                         <BiSolidDashboard size={25}  />
                        <a href='/'> Dashboard  </a>
                     </div>
-                        <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]'>
-                            <BsLayersFill size={20} />
-                            <a className=''>Layout</a>
-                        </div>
+                     
                         <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
                             <AiFillCar size={20}  />
                             <Link to='/car-form'>Car Forms</Link>
@@ -299,9 +298,24 @@ function Sidebar({openSidebarToggle, OpenSidebar}) {
                         </div>
                         <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
                             <MdTour size={20}  />
-                            <a className=''>Tour Detail Forms</a>
+                            <Link to="/tour">Tour Detail Forms</Link>
                         </div>
-                     
+                        <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
+                            <RiMemoriesFill size={20}  />
+                            <Link to='/car-memories'>Memories Forms</Link>
+                        </div>
+                        <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
+                            <FaWpforms size={20}  />
+                            <Link to='/car-cab-collection'>CarCab Collection Forms</Link>
+                        </div>
+                        <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
+                            <FaWpforms size={20}  />
+                            <Link to='/booking-detail'>Booking Detail</Link>
+                        </div>
+                        <div className='flex p-5 space-x-7 group hover:bg-[#c7def0]' >
+                            <FaWpforms size={20}  />
+                            <Link to='/contact-detail'>Contacts Detail</Link>
+                        </div>
                    </div>
               </div>
 
